@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="data/Polygons_0.js"></script>
+        <script src="data/Lines_1.js"></script>
+        <script src="data/Points_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var crs = new L.Proj.CRS('EPSG:32617', '+proj=utm +zone=17 +datum=WGS84 +units=m +no_defs', {
+            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+        });
+        var map = L.map('map', {
+            crs: crs,
+            continuousWorld: false,
+            worldCopyJump: false, 
+            zoomControl:true, maxZoom:28, minZoom:13
+        }).fitBounds([[43.58432752578088,-79.68011825229833],[43.586602240889725,-79.67593554723616]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_Polygons_0(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OSM ID</strong><br />' + (feature.properties['osm_way_id'] !== null ? autolinker.link(feature.properties['osm_way_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Land Use</strong><br />' + (feature.properties['landuse'] !== null ? autolinker.link(feature.properties['landuse'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Other Tags</strong><br />' + (feature.properties['other_tags'] !== null ? autolinker.link(feature.properties['other_tags'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Polygons_0_0(feature) {
+            switch(String(feature.properties['q2wHide_amenity'])) {
+                case 'construction':
+                    return {
+                pane: 'pane_Polygons_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(34,209,90,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'parking':
+                    return {
+                pane: 'pane_Polygons_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(46,79,227,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'place_of_worship':
+                    return {
+                pane: 'pane_Polygons_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,13,159,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_Polygons_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(214,181,13,0.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Polygons_0');
+        map.getPane('pane_Polygons_0').style.zIndex = 400;
+        map.getPane('pane_Polygons_0').style['mix-blend-mode'] = 'normal';
+        var layer_Polygons_0 = new L.geoJson(json_Polygons_0, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Polygons_0',
+            layerName: 'layer_Polygons_0',
+            pane: 'pane_Polygons_0',
+            onEachFeature: pop_Polygons_0,
+            style: style_Polygons_0_0,
+        });
+        bounds_group.addLayer(layer_Polygons_0);
+        map.addLayer(layer_Polygons_0);
+        function pop_Lines_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OSM_ID</strong><br />' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Other Tags</strong><br />' + (feature.properties['other_tags'] !== null ? autolinker.link(feature.properties['other_tags'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Type</strong><br />' + (feature.properties['Type'] !== null ? autolinker.link(feature.properties['Type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Lines_1_0(feature) {
+            switch(String(feature.properties['Type'])) {
+                case 'Multi-use Trail':
+                    return {
+                pane: 'pane_Lines_1',
+                opacity: 1,
+                color: 'rgba(128,217,38,1.0)',
+                dashArray: '10,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Residential Road':
+                    return {
+                pane: 'pane_Lines_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Road':
+                    return {
+                pane: 'pane_Lines_1',
+                opacity: 1,
+                color: 'rgba(111,111,111,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Service Road':
+                    return {
+                pane: 'pane_Lines_1',
+                opacity: 1,
+                color: 'rgba(218,147,54,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+                case 'Sidewalk':
+                    return {
+                pane: 'pane_Lines_1',
+                opacity: 1,
+                color: 'rgba(224,47,139,1.0)',
+                dashArray: '1,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Lines_1');
+        map.getPane('pane_Lines_1').style.zIndex = 401;
+        map.getPane('pane_Lines_1').style['mix-blend-mode'] = 'normal';
+        var layer_Lines_1 = new L.geoJson(json_Lines_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Lines_1',
+            layerName: 'layer_Lines_1',
+            pane: 'pane_Lines_1',
+            onEachFeature: pop_Lines_1,
+            style: style_Lines_1_0,
+        });
+        bounds_group.addLayer(layer_Lines_1);
+        map.addLayer(layer_Lines_1);
+        function pop_Points_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OSM_ID</strong><br />' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Other Tags</strong><br />' + (feature.properties['other_tags'] !== null ? autolinker.link(feature.properties['other_tags'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Points_2_0(feature) {
+            switch(String(feature.properties['q2wHide_highway'])) {
+                case 'bus_stop':
+                    return {
+                pane: 'pane_Points_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(96,49,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'crossing':
+                    return {
+                pane: 'pane_Points_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(28,205,75,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'stop':
+                    return {
+                pane: 'pane_Points_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(187,224,84,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'traffic_signals':
+                    return {
+                pane: 'pane_Points_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(224,81,186,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'turning_circle':
+                    return {
+                pane: 'pane_Points_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(20,165,218,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_Points_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,12,94,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Points_2');
+        map.getPane('pane_Points_2').style.zIndex = 402;
+        map.getPane('pane_Points_2').style['mix-blend-mode'] = 'normal';
+        var layer_Points_2 = new L.geoJson(json_Points_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Points_2',
+            layerName: 'layer_Points_2',
+            pane: 'pane_Points_2',
+            onEachFeature: pop_Points_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Points_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Points_2);
+        map.addLayer(layer_Points_2);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Points<br /><table><tr><td style="text-align: center;"><img src="legend/Points_2_BusStop0.png" /></td><td>Bus Stop</td></tr><tr><td style="text-align: center;"><img src="legend/Points_2_Crosswalk1.png" /></td><td>Crosswalk</td></tr><tr><td style="text-align: center;"><img src="legend/Points_2_StopSign2.png" /></td><td>Stop Sign</td></tr><tr><td style="text-align: center;"><img src="legend/Points_2_TrafficSignals3.png" /></td><td>Traffic Signals</td></tr><tr><td style="text-align: center;"><img src="legend/Points_2_TurningCircle4.png" /></td><td>Turning Circle</td></tr><tr><td style="text-align: center;"><img src="legend/Points_2_GardenCenter5.png" /></td><td>Garden Center</td></tr></table>': layer_Points_2,'Lines<br /><table><tr><td style="text-align: center;"><img src="legend/Lines_1_MultiuseTrail0.png" /></td><td>Multi-use Trail</td></tr><tr><td style="text-align: center;"><img src="legend/Lines_1_ResidentialRoad1.png" /></td><td>Residential Road</td></tr><tr><td style="text-align: center;"><img src="legend/Lines_1_Road2.png" /></td><td>Road</td></tr><tr><td style="text-align: center;"><img src="legend/Lines_1_ServiceRoad3.png" /></td><td>Service Road</td></tr><tr><td style="text-align: center;"><img src="legend/Lines_1_Sidewalk4.png" /></td><td>Sidewalk</td></tr></table>': layer_Lines_1,'Polygons<br /><table><tr><td style="text-align: center;"><img src="legend/Polygons_0_MasjidAlFarooqConstruction0.png" /></td><td>Masjid Al-Farooq Construction</td></tr><tr><td style="text-align: center;"><img src="legend/Polygons_0_ParkingArea1.png" /></td><td>Parking Area</td></tr><tr><td style="text-align: center;"><img src="legend/Polygons_0_MasjidAlFarooq2.png" /></td><td>Masjid Al-Farooq</td></tr><tr><td style="text-align: center;"><img src="legend/Polygons_0_PolygonBoundary3.png" /></td><td>Polygon Boundary</td></tr></table>': layer_Polygons_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_Polygons_0.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['name'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Polygons_0'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_Polygons_0]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Polygons_0]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Polygons_0]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Polygons_0]);
+        });
+        </script>
+    </body>
+	
+	
+	
+</html>
